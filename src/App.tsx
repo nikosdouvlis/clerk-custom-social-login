@@ -1,25 +1,57 @@
 import React from 'react';
-import logo from './logo.svg';
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  SignIn,
+  SignUp,
+  UserButton,
+} from '@clerk/clerk-react';
+import { Link, Route, Switch, useHistory } from 'react-router-dom';
 import './App.css';
 
-function App() {
+function HomePage() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='Home'>
+      <SignedOut>
+        <h2>You are signed out</h2>
+        <div className='Links'>
+          <Link to='/sign-in'>SignIn page</Link>
+          <Link to='/sign-up'>SignUp page</Link>
+        </div>
+      </SignedOut>
+
+      <SignedIn>
+        <h2>You are signed in</h2>
+        <UserButton afterSignOutAll='/' />
+      </SignedIn>
     </div>
+  );
+}
+
+const DEMO_FRONTEND_API = 'clerk.9s8wj.hu2sd.lcl.dev';
+
+function App() {
+  const { push } = useHistory();
+
+  return (
+    <ClerkProvider frontendApi={DEMO_FRONTEND_API} navigate={to => push(to)}>
+      <div className='App'>
+        <Switch>
+          <Route path='/' exact>
+            <HomePage />
+          </Route>
+
+          <Route path='/sign-in'>
+            <SignIn />
+          </Route>
+
+          <Route path='/sign-up'>
+            <SignUp />
+          </Route>
+        </Switch>
+      </div>
+    </ClerkProvider>
   );
 }
 
